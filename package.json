@@ -1,0 +1,47 @@
+{
+	"name": "doxygen2markdown",
+	"version": "0.0.1",
+	"description": "Converts Doxygen XML to MD files.",
+	"main": "./lib/index.js",
+	"bin": {
+		"doxygen2markdown": "./lib/index.js"
+	},
+	"scripts": {
+		"start": "nodemon --watch src/**/*.ts --exec ts-node src/index.ts",
+		"create": "npm run build && npm run test",
+		"build": "tsc -p .",
+		"refresh": "npm i -g"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ProFiLeR4100/doxygen2markdown.git"
+	},
+	"keywords": [
+		"doxygen",
+		"xml",
+		"markdown",
+		"md",
+		"converter"
+	],
+	"author": "ProFiLeR4100 <profiler4100v2@gmail.com>",
+	"license": "GPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/ProFiLeR4100/doxygen2markdown/issues"
+	},
+	"homepage": "https://github.com/ProFiLeR4100/doxygen2markdown#readme",
+	"dependencies": {
+		"chalk": "^3.0.0",
+		"clear": "^0.1.0",
+		"commander": "^4.1.0",
+		"ejs": "^3.0.1",
+		"figlet": "^1.2.4",
+		"path": "^0.12.7",
+		"xml2json": "^0.12.0"
+	},
+	"devDependencies": {
+		"@types/node": "^13.5.0",
+		"nodemon": "^2.0.2",
+		"ts-node": "^8.6.2",
+		"typescript": "^3.7.5"
+	}
+}
