@@ -3,6 +3,7 @@
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
+const pjson = require('../package.json');
 const path = require('path');
 const program = require('commander');
 const fs = require('fs');
@@ -12,11 +13,12 @@ const ejs = require('ejs');
 
 clear();
 program
-	.version('0.0.1')
-	.description("Converts Doxygen XML to MD files.")
-	.option('-d, --doxygen <path>', 'Doxygen XML output directory')
+	.version(pjson.version)
+	.description(pjson.description)
+	.usage('[options]')
+	.option('-d, --doxygen <path>', 'Doxygen XML output directory.')
 	.option('-o, --output <path>', 'Converter output directory.')
-	.option('-t, --templates <path>', 'Custom templates directory')
+	.option('-t, --templates <path>', 'Custom templates directory. (optional)')
 	.parse(process.argv);
 
 console.log(chalk.red(figlet.textSync('DX=>MD', {horizontalLayout: 'full'})));
@@ -39,7 +41,7 @@ if (program.doxygen && program.output) {
 						if (err) throw err;
 
 						let outputPath = path.resolve(program.output, `${compound.id}.md`);
-						console.log(outputPath);
+						console.log('Converted: ', outputPath);
 						fs.writeFile(outputPath, rendered, function (err: Error) {
 							if (err) throw err;
 						});
