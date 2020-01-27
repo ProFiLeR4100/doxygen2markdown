@@ -42,7 +42,7 @@ Auto update WIP
 
 ## Become a Patron
 
-Support this project by becoming a Patron on Patreon. [Sponsor this developer ❤️](https://www.patreon.com/profiler4100)
+Support this project by becoming a Patron on Patreon. [Sponsor this developer ❤](https://www.patreon.com/profiler4100)
 
 
 ##License
