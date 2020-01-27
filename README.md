@@ -5,6 +5,7 @@
 
 NodeJS CLI application that converts Doxygen XML documentation into Markdown files for Bitbucket Wiki, GitHub Pages and other places.
 
+
 ## Installation
 
 Install this app by running next code using terminal (Unix/Linux/MacOS) or command prompt (Windows) 
@@ -12,6 +13,7 @@ Install this app by running next code using terminal (Unix/Linux/MacOS) or comma
 ```
 npm i -g doxygen2markdown 
 ```
+
 
 ## Usage
 
@@ -32,13 +34,16 @@ Options:
   -h, --help              output usage information
 ```
 
+
 ## Patrons <span id="patrons"></span>
 
 Auto update WIP
 
+
 ## Become a Patron
 
 Support this project by becoming a Patron on Patreon. [Sponsor this developer ❤️](https://www.patreon.com/profiler4100)
+
 
 ##License
 
