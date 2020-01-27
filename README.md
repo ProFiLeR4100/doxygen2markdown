@@ -35,6 +35,26 @@ Options:
 ```
 
 
+## Examples
+
+To convert documentation you can use next command:
+
+`doxygen2markdown -d "<path to doxygen xml folder>" -o "<path to markdown folder>"`
+
+If you want to convert documentation with your own templates, use next command:  
+
+`doxygen2markdown -d "<path to doxygen xml folder>" -o "<path to markdown folder>" -t "<path to templates folder>"`
+
+P.S. You can copy templates folder from this repository to get a fast start.
+
+
+## ToDo list
+
+1. Add group conversion support
+2. Add parameters conversion to class/interface
+3. Add code conversion to to class/interface
+
+
 ## Patrons <span id="patrons"></span>
 
 Auto update WIP
