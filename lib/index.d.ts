@@ -8,3 +8,7 @@ declare const fs: any;
 declare const xml2json: any;
 declare const fileMask: RegExp;
 declare const ejs: any;
+interface IArgsFormat {
+    type: string;
+    declname: string;
+}
