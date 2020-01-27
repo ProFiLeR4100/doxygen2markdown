@@ -5,7 +5,6 @@
 
 NodeJS CLI application that converts Doxygen XML documentation into Markdown files for Bitbucket Wiki, GitHub Pages and other places.
 
-
 ## Installation
 
 Install this app by running next code using terminal (Unix/Linux/MacOS) or command prompt (Windows) 
@@ -23,6 +22,8 @@ npm i -g doxygen2markdown
 4. Run `doxygen2markdown` providing the folder location of the XML documentation as it is said in documentation.  
 
 **P.S.** You can see options by running next command `doxygen2markdown` without any options.
+
+**P.S.S.** For template syntax read the [documentation for EJS](https://github.com/mde/ejs) 
 
 ```
 doxygen2markdown
