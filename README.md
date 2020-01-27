@@ -45,6 +45,6 @@ Auto update WIP
 Support this project by becoming a Patron on Patreon. [Sponsor this developer ❤](https://www.patreon.com/profiler4100)
 
 
-##License
+## License
 
 Read LICENSE file for detailed information.
