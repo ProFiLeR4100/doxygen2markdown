@@ -7,5 +7,12 @@ declare const path: any;
 declare const program: any;
 declare const fs: any;
 declare const xml2json: any;
-declare const fileMask: RegExp;
 declare const ejs: any;
+declare class Converter {
+    static ConvertAll(compound: any): any;
+    static ConvertHierarchy(compound: any): any;
+    static ConvertProperties(compound: any): any;
+    static ConvertSummary(compound: any): any;
+    static ConvertFunctions(compound: any): any;
+    static ConvertAttributes(compound: any): any;
+}
