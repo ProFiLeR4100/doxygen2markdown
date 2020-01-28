@@ -2,83 +2,56 @@
 
 ```
 <%= compound.kind %> <%= compound.compoundname %>
-<%  if (compound.basecompoundref) { -%>
-<%      if (Array.isArray(compound.basecompoundref)) { -%>
-<%          compound.basecompoundref.forEach(function(basecompoundref) { -%>
-    : <%- basecompoundref.prot %> <%- basecompoundref.$t %>
-<%          }); -%>
-<%      } else { -%>
-    : <%- compound.basecompoundref.prot %> <%- compound.basecompoundref.$t -%>
-<%      } -%> 
-<% } -%> 
+<%  
+if (cc.hierarchy) { 
+    cc.hierarchy.forEach(function(hierarchyItem) { 
+    
+-%>
+    : <%- hierarchyItem %>
+<%
+
+    });
+} -%> 
 ```
 
 <%= !!compound.briefdescription.para ? compound.briefdescription.para : '' %>
 
+<% if (Array.isArray(cc.summary) && cc.summary.length) { -%>
 ## Summary
 
-<%  
-if (Array.isArray(compound.sectiondef)) { %>
-|Members|Descriptions|
-|---|---| 
-<%  compound.sectiondef.forEach(function(sectiondef) {
-        if (Array.isArray(sectiondef.memberdef)) {
-            sectiondef.memberdef.forEach(function(memberdef) { %>|<%
-                if (memberdef.kind=='property') {
-                    %>`<%= memberdef.kind %>` <%
-                }
-                
-                %><%= memberdef.prot %> <%
-                if (memberdef.static=="yes") { %>static <% }
-                if (memberdef.const=="yes") { %>const <% }
-                if (memberdef.virt=="virtual") { %>virtual <% }
-                
-                %><%= !!memberdef.type && !!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type %> <%
-                %>[<%= memberdef.name %>](#<%- memberdef.id %>)<%
-                
-                if (memberdef.kind==='function') {
-                    %><%= memberdef.argsstring %><%
-                }
-                
-                %>|<%= !!memberdef.briefdescription.para ? memberdef.briefdescription.para : '' %><%
-                %>|
-<%
-            });
-        }
-    });
-} %>
-  
-## Members
-
-<%  
-if (Array.isArray(compound.sectiondef)) {
-    compound.sectiondef.forEach(function(sectiondef) {
-        if (Array.isArray(sectiondef.memberdef)) {
-            sectiondef.memberdef.forEach(function(memberdef) {
-                %>#### <%= memberdef.prot %> <%
-                if (memberdef.static=="yes") { %>static <% }
-                if (memberdef.const=="yes") { %>const <% }
-                if (memberdef.virt=="virtual") { %>virtual <% }
-                
-                %><%# TODO: ADD LINK TO REF %><%= !!memberdef.type && !!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type %> <%
-                %>[<%= memberdef.name %>](#<%- memberdef.id %>)<%
-                
-                if (memberdef.kind==='function') {
-                    %><%= memberdef.argsstring %><%
-                }
-            
-                %><span id='<%- memberdef.id %>'></span>
-
-<%              %><%= !!memberdef.briefdescription.para ? memberdef.briefdescription.para : ''; %>
-
-<%              if (memberdef.initializer) { %>Default value <%= !!memberdef.initializer ? memberdef.initializer : ''; %>
-
-<%              }
-
-                %>Parameters
-                <%# TODO: ADD PARAMETERS %>
-<%
-            });
-        }
+|Member|Description|
+|---|---|<%  
+    cc.summary.forEach(function(summaryItem) {
+        %>
+        | <%= summaryItem.typeDef; %> <%= !!summaryItem.typeRef ? summaryItem.anchoredTypeRef : summaryItem.type; %> <%= summaryItem.anchoredName; %> | <%= summaryItem.description; %> |<% 
     }); 
 } %>
+
+
+<% if (Array.isArray(cc.attributes) && cc.attributes.length) { -%>
+## Attributes
+
+<% cc.attributes.forEach(function(attribute) { %>
+#### <%= attribute.typeDef; %> <%= !!attribute.typeRef ? attribute.anchoredTypeRef : attribute.type; %> `<%= attribute.name; %>` <a id='<%- attribute.anchor %>' href='#<%- attribute.anchor %>'>#</a>
+<%= attribute.description -%>
+<% }); -%>
+<% } %>
+
+
+<% if (Array.isArray(cc.properties) && cc.properties.length) { -%>
+## Properties
+
+<% cc.properties.forEach(function(property) { %>
+#### <%= property.typeDef; %> <%= !!property.typeRef ? property.anchoredTypeRef : property.type; %> `<%= property.name; %>` <a id='<%- property.anchor %>' href='#<%- property.anchor %>'>#</a>
+<%= property.description -%>
+<% }); -%>
+<% } %>
+
+
+<% if (Array.isArray(cc.methods) && cc.methods.length) { -%>
+## Methods
+
+<% cc.methods.forEach(function(method) { %>
+#### <%= method.typeDef; %> <%= !!method.typeRef ? method.anchoredTypeRef : method.type; %> `<%= method.name; %>` <%- method.reimplementsAnchor; %> <a id='<%- method.anchor %>' href='#<%- method.anchor %>'>#</a>
+<% }); -%>
+<% } %>
