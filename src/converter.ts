@@ -1,22 +1,6 @@
 export class Converter {
 	public static ConvertAll(compound: any): any {
 		return {
-			sectionTranslations: {
-				// Attributes
-				'public-attrib': 'Public Attributes',
-				'private-attrib': 'Private Attributes',
-				'public-static-attrib': 'Private Static Attributes',
-				'private-static-attrib': 'Private Static Attributes',
-
-				// Properties
-				'property': 'Properties',
-
-				// Methods
-				'public-func': 'Public Methods',
-				'private-func': 'Private Methods',
-				'public-static-func': 'Static Public Methods',
-				'private-static-func': 'Static Private Methods'
-			},
 			hierarchy: Converter.ConvertHierarchy(compound),
 			summary: Converter.ConvertSummary(compound),
 			attributes: Converter.ConvertAttributes(compound),
@@ -52,8 +36,8 @@ export class Converter {
 			...Converter.ConvertName(memberdef),
 			...Converter.ConvertTypeDefRef(memberdef),
 			...Converter.ConvertFuncDef(memberdef),
-
-			description: memberdef?.briefdescription?.para,
+			...Converter.ConvertDescription(memberdef),
+			memberdef: memberdef
 		};
 	}
 
@@ -69,6 +53,7 @@ export class Converter {
 		return {
 			// self signature
 			typeDef: Converter.ConvertTypeDef(memberdef),
+			initializer: typeof memberdef.initializer == 'object' ? '= {...}' : memberdef.initializer,
 
 			// returns
 			type: !!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type,
@@ -88,6 +73,57 @@ export class Converter {
 			args: memberdef.kind === 'function' ? memberdef.argsstring : '',
 			reimplementsAnchor: reimplements ? `[: ${memberdef.reimplements.$t}](${reimplements[1]}.md#${memberdef?.reimplements?.refid})`: '',
 		};
+	}
+
+	private static ConvertDescription(memberdef: any): any {
+		let shortDescription = memberdef?.briefdescription?.para;
+		let detailedDescription = '';
+		if(memberdef?.detaileddescription?.para) {
+			detailedDescription = ' ' + Converter.ConvertToArray(memberdef?.detaileddescription?.para)
+					.filter((item: any) => typeof item === 'string')
+					.join(' ');
+		}
+		return {
+			description: `${shortDescription ? shortDescription : ''}${detailedDescription ? detailedDescription : ''}`,
+			paramDescription: Converter.ConvertParameterDescription(memberdef?.detaileddescription?.para)
+		};
+	}
+
+	private static ConvertParameterDescription(detailedDescriptionPara: any): any {
+		// TODO: FIX
+		return Converter
+			.ConvertToArray(detailedDescriptionPara)
+			.filter((item: any) => typeof item == 'object')
+			// .map((item: any) => {
+				// console.log(item);
+			// 	return item;
+			// })
+			.map((item: any) => {
+				let parameterDefs = Converter
+					.ConvertToArray(item?.parameterlist)
+					.map((parameteritem: any) => {
+						return Converter
+							.ConvertToArray(parameteritem?.parameteritem)
+							.map((parameteritem: any) => {
+								return {
+									kind: parameteritem?.kind,
+									name: `\`${parameteritem?.parameternamelist?.parametername}\``,
+									description: parameteritem?.parameterdescription?.para
+								};
+							})
+							.filter((parameteritem: any) => !!parameteritem?.description);
+					});
+
+				return parameterDefs;
+			})
+			// .map((item:any) => {
+			// 	console.log(JSON.stringify(item, null, '  '));
+			// 	return item;
+			// })
+			// .reduce((prev:any, curr:any) => {
+			// 	// console.log(prev, curr);
+			// 	return [...prev, curr]
+			// }, []);
 	}
 
 	private static ConvertTypeDef(memberdef: any): string {
@@ -145,7 +181,7 @@ export class Converter {
 		return result;
 	}
 
-	private static ConvertToArray(obj:any): Array<any> {
+	private static ConvertToArray(obj:any): any {
 		if (!obj) {
 			return [];
 		} else if (Array.isArray(obj)) {

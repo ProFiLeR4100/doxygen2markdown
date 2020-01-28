@@ -32,8 +32,8 @@ if (cc.hierarchy) {
 ## Attributes
 
 <% cc.attributes.forEach(function(attribute) { %>
-#### <%= attribute.typeDef; %> <%= !!attribute.typeRef ? attribute.anchoredTypeRef : attribute.type; %> `<%= attribute.name; %>` <a id='<%- attribute.anchor %>' href='#<%- attribute.anchor %>'>#</a>
-<%= attribute.description -%>
+#### <%= attribute.typeDef; %> <%- !!attribute.typeRef ? attribute.anchoredTypeRef : attribute.type; %> `<%= attribute.name; %>` <%= attribute.initializer; %> <a id='<%- attribute.anchor %>' href='#<%- attribute.anchor %>'>#</a>
+<%= attribute.description ? attribute.description : '' -%>
 <% }); -%>
 <% } %>
 
@@ -42,8 +42,8 @@ if (cc.hierarchy) {
 ## Properties
 
 <% cc.properties.forEach(function(property) { %>
-#### <%= property.typeDef; %> <%= !!property.typeRef ? property.anchoredTypeRef : property.type; %> `<%= property.name; %>` <a id='<%- property.anchor %>' href='#<%- property.anchor %>'>#</a>
-<%= property.description -%>
+#### <%= property.typeDef; %> <%- !!property.typeRef ? property.anchoredTypeRef : property.type; %> `<%= property.name; %>` <%= property.initializer; %> <a id='<%- property.anchor %>' href='#<%- property.anchor %>'>#</a>
+<%= property.description ? property.description : '' -%>
 <% }); -%>
 <% } %>
 
@@ -52,6 +52,7 @@ if (cc.hierarchy) {
 ## Methods
 
 <% cc.methods.forEach(function(method) { %>
-#### <%= method.typeDef; %> <%= !!method.typeRef ? method.anchoredTypeRef : method.type; %> `<%= method.name; %>` <%- method.reimplementsAnchor; %> <a id='<%- method.anchor %>' href='#<%- method.anchor %>'>#</a>
+#### <%= method.typeDef; %> <%- !!method.typeRef ? method.anchoredTypeRef : method.type; %> `<%= method.name; %><%- method.args; %>` <%- method.reimplementsAnchor; %> <a id='<%- method.anchor %>' href='#<%- method.anchor %>'>#</a>
+<%= method.description ? method.description : '' -%>
 <% }); -%>
 <% } %>
