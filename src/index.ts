@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import {Converter} from "./converter";
+
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
@@ -55,73 +57,7 @@ if (program.doxygen && program.output) {
 }
 
 
-class Converter {
-	public static ConvertAll(compound: any): any {
-		return {
-			hierarchy: Converter.ConvertHierarchy(compound),
-			summary: Converter.ConvertSummary(compound),
-			properties: Converter.ConvertProperties(compound),
-			functions: Converter.ConvertFunctions(compound),
-			attributes: Converter.ConvertAttributes(compound)
-		}
-	}
 
-	public static ConvertHierarchy(compound: any): any {
-		let result: any = [];
-		if (Array.isArray(compound.basecompoundref)) {
-			result.push(...compound.basecompoundref.map((basecompoundref: any) => `${basecompoundref.prot} ${basecompoundref.$t}`))
-		} else if (compound?.basecompoundref?.prot) {
-			result.push(`${compound.basecompoundref.prot} ${compound.basecompoundref.$t}`)
-		}
-		return result;
-	}
-
-	public static ConvertProperties(compound: any): any {
-		return [];
-	}
-
-	public static ConvertSummary(compound: any): any {
-		let result: Array<any> = [];
-
-		Array.isArray(compound.sectiondef) && compound.sectiondef.forEach((sectiondef: any) => {
-			Array.isArray(sectiondef.memberdef) && sectiondef.memberdef.forEach((memberdef: any) => {
-				let typeDef = '';
-
-				typeDef += memberdef.kind == 'property' ? 'property ' : '';
-				typeDef += `${memberdef.prot} `;
-				typeDef += memberdef.static == 'yes' ? 'static ' : '';
-				typeDef += memberdef.const == 'yes' ? 'const ' : '';
-				typeDef += memberdef.virt == 'virtual' ? 'virtual ' : '';
-				typeDef += memberdef.virt == 'virtual' ? 'virtual ' : '';
-
-				result.push({
-					typeDef: typeDef,
-
-					name: memberdef.name,
-					anchor: memberdef.id,
-					anchoredName: `[${memberdef?.name}](#${memberdef?.id})`,
-
-					type: !!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type,
-					typeRef: memberdef?.type?.ref,
-					anchoredTypeRef: memberdef?.type?.ref?.kindref == "compound" ? `[${!!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type}](${memberdef?.type?.ref?.refid}.md#${memberdef?.type?.ref?.$t})` : `#${memberdef?.type?.ref?.$t}`,
-
-					args: memberdef.kind === 'function' ? memberdef.argsstring : '',
-					description: memberdef?.briefdescription?.para,
-				});
-			});
-		});
-
-		return result;
-	}
-
-	public static ConvertFunctions(compound: any): any {
-		return [];
-	}
-
-	public static ConvertAttributes(compound: any): any {
-		return [];
-	}
-}
 
 
 if (!process.argv.slice(2).length) {
