@@ -46,7 +46,9 @@ If you want to convert documentation with your own templates, use next command:
 
 `doxygen2markdown -d "<path to doxygen xml folder>" -o "<path to markdown folder>" -t "<path to templates folder>"`
 
-P.S. You can copy templates folder from this repository to get a fast start.
+**P.S.** You can copy templates folder from this repository to get a fast start.
+
+**P.S.S.** For template syntax read the [documentation for EJS](https://github.com/mde/ejs) 
 
 
 ## ToDo list
