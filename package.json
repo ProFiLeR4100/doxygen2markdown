@@ -2,9 +2,9 @@
 	"name": "doxygen2markdown",
 	"version": "0.0.2",
 	"description": "NodeJS CLI application that converts Doxygen XML documentation into Markdown files for Bitbucket Wiki, GitHub Pages and other places.",
-	"main": "./lib/index.js",
+	"main": "./bin/index.js",
 	"bin": {
-		"doxygen2markdown": "./lib/index.js"
+		"doxygen2markdown": "./bin/index.js"
 	},
 	"scripts": {
 		"start": "nodemon --watch src/**/*.ts --exec tsc -e ts -p .",
