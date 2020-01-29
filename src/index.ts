@@ -12,6 +12,8 @@ const fs = require('fs');
 const xml2json = require('xml2json');
 const ejs = require('ejs');
 
+polyfills();
+
 clear();
 program
 	.version(pjson.version)
@@ -62,4 +64,16 @@ if (program.doxygen && program.output) {
 
 if (!process.argv.slice(2).length) {
 	program.outputHelp();
+}
+
+
+function polyfills() {
+	Object.defineProperty(Array.prototype, 'flat', {
+		value: function(depth: number = 1) {
+			return this.reduce(function (flat: Array<any>, toFlatten:Array<any>) {
+				// @ts-ignore
+				return flat.concat((Array.isArray(toFlatten) && (depth>1)) ? toFlatten.flat(depth-1) : toFlatten);
+			}, []);
+		}
+	});
 }
