@@ -53,6 +53,33 @@ if (cc.hierarchy) {
 
 <% cc.methods.forEach(function(method) { %>
 #### <%= method.typeDef; %> <%- !!method.typeRef ? method.anchoredTypeRef : method.type; %> `<%= method.name; %><%- method.args; %>` <%- method.reimplementsAnchor; %> <a id='<%- method.anchor %>' href='#<%- method.anchor %>'>#</a>
-<%= method.description ? method.description : '' -%>
+
+<% 
+if (Array.isArray(method.description) && method.description.length) { 
+    method.description.forEach(function(description) {
+        %>
+<%= description %>
+        <% 
+    });
+}
+%>
+
+
+<% 
+if (Array.isArray(method.paramDescription) && method.paramDescription.length) { 
+%>
+|Type|Member|Description|
+|---|---|---|
+<%
+    method.paramDescription.forEach(function(kind) {
+        if (Array.isArray(kind.parameters) && kind.parameters.length) {
+            kind.parameters.forEach(function(parameter) {
+                %>|<%- kind.kind %>|<%- parameter.name %>|<%- parameter.description %>|
+                <%                
+            });
+        }
+    });
+} 
+%>
 <% }); -%>
 <% } %>

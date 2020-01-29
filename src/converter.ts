@@ -22,8 +22,8 @@ export class Converter {
 	public static ConvertSummary(compound: any): any {
 		let result: Array<any> = [];
 
-		Converter.ConvertToArray(compound.sectiondef).forEach((sectiondef: any) => {
-			Converter.ConvertToArray(sectiondef.memberdef).forEach((memberdef: any) => {
+		Converter.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
+			Converter.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
 			});
 		});
@@ -50,13 +50,18 @@ export class Converter {
 	}
 
 	private static ConvertTypeDefRef(memberdef: any): any {
+		let type = !!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type;
+		if(typeof type === 'object') {
+			type = !Object.keys(type).length ? memberdef.name : type
+		}
+
 		return {
 			// self signature
 			typeDef: Converter.ConvertTypeDef(memberdef),
 			initializer: typeof memberdef.initializer == 'object' ? '= {...}' : memberdef.initializer,
 
 			// returns
-			type: !!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type,
+			type: type,
 			typeRef: memberdef?.type?.ref,
 			anchoredTypeRef: memberdef?.type?.ref?.kindref == "compound" ? `[${!!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type}](${memberdef?.type?.ref?.refid}.md#${memberdef?.type?.ref?.$t})` : `#${memberdef?.type?.ref?.$t}`,
 		};
@@ -76,54 +81,49 @@ export class Converter {
 	}
 
 	private static ConvertDescription(memberdef: any): any {
-		let shortDescription = memberdef?.briefdescription?.para;
-		let detailedDescription = '';
-		if(memberdef?.detaileddescription?.para) {
-			detailedDescription = ' ' + Converter.ConvertToArray(memberdef?.detaileddescription?.para)
-					.filter((item: any) => typeof item === 'string')
-					.join(' ');
-		}
+		let description = Converter.ToArray(memberdef?.briefdescription?.para)
+			.concat(Converter.ToArray(memberdef?.detaileddescription?.para))
+			.filter((item: any) => typeof item === 'string');
+
 		return {
-			description: `${shortDescription ? shortDescription : ''}${detailedDescription ? detailedDescription : ''}`,
-			paramDescription: Converter.ConvertParameterDescription(memberdef?.detaileddescription?.para)
+			description: description,
+			paramDescription:
+				Converter.ConvertParameterDescription(memberdef?.briefdescription?.para)
+				.concat(Converter.ConvertParameterDescription(memberdef?.detaileddescription?.para))
 		};
 	}
 
 	private static ConvertParameterDescription(detailedDescriptionPara: any): any {
-		// TODO: FIX
 		return Converter
-			.ConvertToArray(detailedDescriptionPara)
-			.filter((item: any) => typeof item == 'object')
-			// .map((item: any) => {
-				// console.log(item);
-			// 	return item;
-			// })
+			.ToArray(detailedDescriptionPara)
+			.filter((item: any) => !!item?.simplesect || !!item?.parameterlist)
 			.map((item: any) => {
-				let parameterDefs = Converter
-					.ConvertToArray(item?.parameterlist)
-					.map((parameteritem: any) => {
-						return Converter
-							.ConvertToArray(parameteritem?.parameteritem)
-							.map((parameteritem: any) => {
-								return {
-									kind: parameteritem?.kind,
-									name: `\`${parameteritem?.parameternamelist?.parametername}\``,
-									description: parameteritem?.parameterdescription?.para
-								};
-							})
-							.filter((parameteritem: any) => !!parameteritem?.description);
-					});
-
-				return parameterDefs;
+				return [
+					...Converter.ToArray(item?.simplesect),
+					...Converter.ToArray(item?.parameterlist)
+				]
 			})
-			// .map((item:any) => {
-			// 	console.log(JSON.stringify(item, null, '  '));
-			// 	return item;
-			// })
-			// .reduce((prev:any, curr:any) => {
-			// 	// console.log(prev, curr);
-			// 	return [...prev, curr]
-			// }, []);
+			.flat()
+			.map((item: any) => {
+				if(item?.kind === 'return') {
+					return {
+						kind: item?.kind,
+						description: item?.para
+					};
+				}
+
+				return {
+					kind: item?.kind,
+					parameters: Converter
+						.ToArray(item?.parameteritem)
+						.map((item: any) => {
+							return {
+								name: item?.parameternamelist?.parametername,
+								description: item?.parameterdescription?.para ? item?.parameterdescription?.para : item?.parameterdescription
+							};
+						})
+				};
+			});
 	}
 
 	private static ConvertTypeDef(memberdef: any): string {
@@ -142,10 +142,10 @@ export class Converter {
 	public static ConvertMethods(compound: any): any {
 		let result: Array<any> = [];
 
-		Converter.ConvertToArray(compound.sectiondef).forEach((sectiondef: any) => {
+		Converter.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
 			if(sectiondef.kind.indexOf('func') == -1) return;
 
-			Converter.ConvertToArray(sectiondef.memberdef).forEach((memberdef: any) => {
+			Converter.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
 			});
 		});
@@ -156,10 +156,10 @@ export class Converter {
 	public static ConvertProperties(compound: any): any {
 		let result: Array<any> = [];
 
-		Converter.ConvertToArray(compound.sectiondef).forEach((sectiondef: any) => {
+		Converter.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
 			if(sectiondef.kind.indexOf('prop') == -1) return;
 
-			Converter.ConvertToArray(sectiondef.memberdef).forEach((memberdef: any) => {
+			Converter.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
 			});
 		});
@@ -170,10 +170,10 @@ export class Converter {
 	public static ConvertAttributes(compound: any): any {
 		let result: Array<any> = [];
 
-		Converter.ConvertToArray(compound.sectiondef).forEach((sectiondef: any) => {
+		Converter.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
 			if(sectiondef.kind.indexOf('attrib') == -1) return;
 
-			Converter.ConvertToArray(sectiondef.memberdef).forEach((memberdef: any) => {
+			Converter.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
 			});
 		});
@@ -181,7 +181,7 @@ export class Converter {
 		return result;
 	}
 
-	private static ConvertToArray(obj:any): any {
+	private static ToArray(obj:any): any {
 		if (!obj) {
 			return [];
 		} else if (Array.isArray(obj)) {

@@ -12,5 +12,5 @@ export declare class Converter {
     static ConvertMethods(compound: any): any;
     static ConvertProperties(compound: any): any;
     static ConvertAttributes(compound: any): any;
-    private static ConvertToArray;
+    private static ToArray;
 }
