@@ -62,8 +62,8 @@ var Converter = /** @class */ (function () {
         };
     };
     Converter.ConvertTypeDefRef = function (memberdef) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
-        var type = !!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        var type = !!((_b = (_a = memberdef) === null || _a === void 0 ? void 0 : _a.type) === null || _b === void 0 ? void 0 : _b.ref) ? memberdef.type.ref.$t : memberdef.type;
         if (typeof type === 'object') {
             type = !Object.keys(type).length ? memberdef.name : type;
         }
@@ -73,8 +73,8 @@ var Converter = /** @class */ (function () {
             initializer: typeof memberdef.initializer == 'object' ? '= {...}' : memberdef.initializer,
             // returns
             type: type,
-            typeRef: (_b = (_a = memberdef) === null || _a === void 0 ? void 0 : _a.type) === null || _b === void 0 ? void 0 : _b.ref,
-            anchoredTypeRef: ((_e = (_d = (_c = memberdef) === null || _c === void 0 ? void 0 : _c.type) === null || _d === void 0 ? void 0 : _d.ref) === null || _e === void 0 ? void 0 : _e.kindref) == "compound" ? "[" + (!!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type) + "](" + ((_h = (_g = (_f = memberdef) === null || _f === void 0 ? void 0 : _f.type) === null || _g === void 0 ? void 0 : _g.ref) === null || _h === void 0 ? void 0 : _h.refid) + ".md#" + ((_l = (_k = (_j = memberdef) === null || _j === void 0 ? void 0 : _j.type) === null || _k === void 0 ? void 0 : _k.ref) === null || _l === void 0 ? void 0 : _l.$t) + ")" : "#" + ((_p = (_o = (_m = memberdef) === null || _m === void 0 ? void 0 : _m.type) === null || _o === void 0 ? void 0 : _o.ref) === null || _p === void 0 ? void 0 : _p.$t),
+            typeRef: (_d = (_c = memberdef) === null || _c === void 0 ? void 0 : _c.type) === null || _d === void 0 ? void 0 : _d.ref,
+            anchoredTypeRef: ((_g = (_f = (_e = memberdef) === null || _e === void 0 ? void 0 : _e.type) === null || _f === void 0 ? void 0 : _f.ref) === null || _g === void 0 ? void 0 : _g.kindref) == "compound" ? "[" + (!!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type) + "](" + ((_k = (_j = (_h = memberdef) === null || _h === void 0 ? void 0 : _h.type) === null || _j === void 0 ? void 0 : _j.ref) === null || _k === void 0 ? void 0 : _k.refid) + ".md#" + ((_o = (_m = (_l = memberdef) === null || _l === void 0 ? void 0 : _l.type) === null || _m === void 0 ? void 0 : _m.ref) === null || _o === void 0 ? void 0 : _o.$t) + ")" : "#" + ((_r = (_q = (_p = memberdef) === null || _p === void 0 ? void 0 : _p.type) === null || _q === void 0 ? void 0 : _q.ref) === null || _r === void 0 ? void 0 : _r.$t),
         };
     };
     Converter.ConvertFuncDef = function (memberdef) {

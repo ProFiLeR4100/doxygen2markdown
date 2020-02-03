@@ -50,7 +50,7 @@ export class Converter {
 	}
 
 	private static ConvertTypeDefRef(memberdef: any): any {
-		let type = !!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type;
+		let type = !!memberdef?.type?.ref ? memberdef.type.ref.$t : memberdef.type;
 		if(typeof type === 'object') {
 			type = !Object.keys(type).length ? memberdef.name : type
 		}
