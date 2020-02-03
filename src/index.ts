@@ -3,7 +3,6 @@
 import {Converter} from "./converter";
 
 const chalk = require('chalk');
-const clear = require('clear');
 const figlet = require('figlet');
 const pjson = require('../package.json');
 const path = require('path');
@@ -14,7 +13,6 @@ const ejs = require('ejs');
 
 polyfills();
 
-clear();
 program
 	.version(pjson.version)
 	.description(pjson.description)
@@ -47,9 +45,11 @@ if (program.doxygen && program.output) {
 					}, null, (err: Error, rendered: string) => {
 						if (err) throw err;
 
-						let outputPath = path.resolve(program.output, `${compound.id}.md`);
+						let outputFileName = `${compound.id}.md`;
+						let outputPath = path.resolve(program.output, outputFileName);
 						fs.writeFile(outputPath, rendered, function (err: Error) {
 							if (err) throw err;
+							console.log(`Converted ${chalk.yellow(fileName)} => ${chalk.green(outputFileName)}`);
 						});
 					});
 				});

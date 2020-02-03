@@ -1,6 +1,6 @@
 {
 	"name": "doxygen2markdown",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"description": "NodeJS CLI application that converts Doxygen XML documentation into Markdown files for Bitbucket Wiki, GitHub Pages and other places.",
 	"main": "./bin/index.js",
 	"bin": {
@@ -29,7 +29,6 @@
 	"homepage": "https://github.com/ProFiLeR4100/doxygen2markdown#readme",
 	"dependencies": {
 		"chalk": "^3.0.0",
-		"clear": "^0.1.0",
 		"commander": "^4.1.0",
 		"ejs": "^3.0.1",
 		"figlet": "^1.2.4",

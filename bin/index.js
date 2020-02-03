@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var converter_1 = require("./converter");
 var chalk = require('chalk');
-var clear = require('clear');
 var figlet = require('figlet');
 var pjson = require('../package.json');
 var path = require('path');
@@ -12,7 +11,6 @@ var fs = require('fs');
 var xml2json = require('xml2json');
 var ejs = require('ejs');
 polyfills();
-clear();
 program
     .version(pjson.version)
     .description(pjson.description)
@@ -42,10 +40,12 @@ if (program.doxygen && program.output) {
                     }, null, function (err, rendered) {
                         if (err)
                             throw err;
-                        var outputPath = path.resolve(program.output, compound.id + ".md");
+                        var outputFileName = compound.id + ".md";
+                        var outputPath = path.resolve(program.output, outputFileName);
                         fs.writeFile(outputPath, rendered, function (err) {
                             if (err)
                                 throw err;
+                            console.log("Converted " + chalk.yellow(fileName) + " => " + chalk.green(outputFileName));
                         });
                     });
                 });
