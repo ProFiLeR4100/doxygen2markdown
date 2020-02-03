@@ -28,7 +28,7 @@ if (program.doxygen && program.output) {
     program.templates = program.templates ? path.resolve(program.templates) : path.resolve(__dirname, '../templates');
     fs.readdir(program.doxygen, function (err, filesPaths) {
         filesPaths.forEach(function (fileName) {
-            var fileMask = /(class|interface)_(.*)\.xml/gm;
+            var fileMask = /(class|interface|struct)_(.*)\.xml/gm;
             var match = fileMask.exec(fileName);
             if (match) {
                 fs.readFile(program.doxygen + '/' + fileName, 'utf8', function (err, data) {

@@ -32,7 +32,7 @@ if (program.doxygen && program.output) {
 
 	fs.readdir(program.doxygen, (err: Error, filesPaths: Array<string>) => {
 		filesPaths.forEach((fileName) => {
-			let fileMask = /(class|interface)_(.*)\.xml/gm;
+			let fileMask = /(class|interface|struct)_(.*)\.xml/gm;
 			let match = fileMask.exec(fileName);
 			if (match) {
 				fs.readFile(program.doxygen + '/' + fileName, 'utf8', (err: Error, data: string) => {
