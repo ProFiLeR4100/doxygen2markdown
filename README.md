@@ -53,9 +53,8 @@ If you want to convert documentation with your own templates, use next command:
 
 ## ToDo list
 
-1. Add group conversion support
-2. Add parameters conversion to class/interface
-3. Add code conversion to to class/interface
+1. Add group, namespace conversion support
+2. Add code conversion to to class/interface
 
 
 ## Patrons <span id="patrons"></span>
