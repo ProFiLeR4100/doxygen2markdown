@@ -7,6 +7,6 @@
 |---|---|<%  
     cc.summary.forEach(function(summaryItem) {
         %>
-        | <%= summaryItem.typeDef; %> <%= !!summaryItem.typeRef ? summaryItem.anchoredTypeRef : summaryItem.type; %> <%= summaryItem.anchoredName; %> | <%= summaryItem.description; %> |<% 
+| <%= summaryItem.typeDef; %> <%= !!summaryItem.typeRef ? summaryItem.anchoredTypeRef : summaryItem.type; %> <%= summaryItem.anchoredName; %> | <%= summaryItem.description; %> |<%
     }); 
 } %>
