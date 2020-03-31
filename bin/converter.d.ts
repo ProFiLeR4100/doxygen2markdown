@@ -8,9 +8,7 @@ export declare class Converter {
     private static ConvertFuncDef;
     private static ConvertDescription;
     private static ConvertParameterDescription;
-    private static ConvertTypeDef;
     static ConvertMethods(compound: any): any;
     static ConvertProperties(compound: any): any;
     static ConvertAttributes(compound: any): any;
-    private static ToArray;
 }

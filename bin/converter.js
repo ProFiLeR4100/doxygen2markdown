@@ -10,15 +10,11 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var ReferenceHelper_1 = require("./helpers/ReferenceHelper");
+var ParameterHelper_1 = require("./helpers/ParameterHelper");
+var ArrayHelper_1 = require("./helpers/ArrayHelper");
+var TypeDefinitionHelper_1 = require("./helpers/TypeDefinitionHelper");
 var Converter = /** @class */ (function () {
     function Converter() {
     }
@@ -44,8 +40,8 @@ var Converter = /** @class */ (function () {
     };
     Converter.ConvertSummary = function (compound) {
         var result = [];
-        Converter.ToArray(compound.sectiondef).forEach(function (sectiondef) {
-            Converter.ToArray(sectiondef.memberdef).forEach(function (memberdef) {
+        ArrayHelper_1.ArrayHelper.ToArray(compound.sectiondef).forEach(function (sectiondef) {
+            ArrayHelper_1.ArrayHelper.ToArray(sectiondef.memberdef).forEach(function (memberdef) {
                 result.push(Converter.ConvertMemberDef(memberdef));
             });
         });
@@ -70,7 +66,7 @@ var Converter = /** @class */ (function () {
         }
         return {
             // self signature
-            typeDef: Converter.ConvertTypeDef(memberdef),
+            typeDef: TypeDefinitionHelper_1.TypeDefinitionHelper.ConvertTypeDef(memberdef),
             initializer: typeof memberdef.initializer == 'object' ? '= {...}' : memberdef.initializer,
             // returns
             type: type,
@@ -79,21 +75,15 @@ var Converter = /** @class */ (function () {
         };
     };
     Converter.ConvertFuncDef = function (memberdef) {
-        var _a, _b, _c, _d;
-        var reimplementsRegex = /(.*)_.*$/gm;
-        var reimplements = null;
-        if (memberdef.reimplements) {
-            reimplements = reimplementsRegex.exec((_b = (_a = memberdef) === null || _a === void 0 ? void 0 : _a.reimplements) === null || _b === void 0 ? void 0 : _b.refid);
-        }
         return {
             args: memberdef.kind === 'function' ? memberdef.argsstring : '',
-            reimplementsAnchor: reimplements ? "[: " + memberdef.reimplements.$t + "](" + reimplements[1] + ".md#" + ((_d = (_c = memberdef) === null || _c === void 0 ? void 0 : _c.reimplements) === null || _d === void 0 ? void 0 : _d.refid) + ")" : '',
+            reimplementsAnchor: ReferenceHelper_1.ReferenceHelper.InheritanceToLink(memberdef),
         };
     };
     Converter.ConvertDescription = function (memberdef) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
-        var description = Converter.ToArray((_b = (_a = memberdef) === null || _a === void 0 ? void 0 : _a.briefdescription) === null || _b === void 0 ? void 0 : _b.para)
-            .concat(Converter.ToArray((_d = (_c = memberdef) === null || _c === void 0 ? void 0 : _c.detaileddescription) === null || _d === void 0 ? void 0 : _d.para))
+        var description = ArrayHelper_1.ArrayHelper.ToArray((_b = (_a = memberdef) === null || _a === void 0 ? void 0 : _a.briefdescription) === null || _b === void 0 ? void 0 : _b.para)
+            .concat(ArrayHelper_1.ArrayHelper.ToArray((_d = (_c = memberdef) === null || _c === void 0 ? void 0 : _c.detaileddescription) === null || _d === void 0 ? void 0 : _d.para))
             .filter(function (item) { return typeof item === 'string'; });
         return {
             description: description,
@@ -101,53 +91,15 @@ var Converter = /** @class */ (function () {
                 .concat(Converter.ConvertParameterDescription((_h = (_g = memberdef) === null || _g === void 0 ? void 0 : _g.detaileddescription) === null || _h === void 0 ? void 0 : _h.para))
         };
     };
-    Converter.ConvertParameterDescription = function (detailedDescriptionPara) {
-        return Converter
-            .ToArray(detailedDescriptionPara)
-            .filter(function (item) { var _a, _b; return !!((_a = item) === null || _a === void 0 ? void 0 : _a.simplesect) || !!((_b = item) === null || _b === void 0 ? void 0 : _b.parameterlist); })
-            .map(function (item) {
-            var _a, _b;
-            return __spreadArrays(Converter.ToArray((_a = item) === null || _a === void 0 ? void 0 : _a.simplesect), Converter.ToArray((_b = item) === null || _b === void 0 ? void 0 : _b.parameterlist));
-        })
-            .flat()
-            .map(function (item) {
-            var _a, _b, _c, _d, _e;
-            if (((_a = item) === null || _a === void 0 ? void 0 : _a.kind) === 'return') {
-                return {
-                    kind: (_b = item) === null || _b === void 0 ? void 0 : _b.kind,
-                    description: (_c = item) === null || _c === void 0 ? void 0 : _c.para
-                };
-            }
-            return {
-                kind: (_d = item) === null || _d === void 0 ? void 0 : _d.kind,
-                parameters: Converter
-                    .ToArray((_e = item) === null || _e === void 0 ? void 0 : _e.parameteritem)
-                    .map(function (item) {
-                    var _a, _b, _c, _d, _e, _f, _g;
-                    return {
-                        name: (_b = (_a = item) === null || _a === void 0 ? void 0 : _a.parameternamelist) === null || _b === void 0 ? void 0 : _b.parametername,
-                        description: ((_d = (_c = item) === null || _c === void 0 ? void 0 : _c.parameterdescription) === null || _d === void 0 ? void 0 : _d.para) ? (_f = (_e = item) === null || _e === void 0 ? void 0 : _e.parameterdescription) === null || _f === void 0 ? void 0 : _f.para : (_g = item) === null || _g === void 0 ? void 0 : _g.parameterdescription
-                    };
-                })
-            };
-        });
-    };
-    Converter.ConvertTypeDef = function (memberdef) {
-        var typeDef = '';
-        typeDef += memberdef.kind == 'property' ? 'property ' : '';
-        typeDef += memberdef.prot + " ";
-        typeDef += memberdef.static == 'yes' ? 'static ' : '';
-        typeDef += memberdef.const == 'yes' ? 'const ' : '';
-        typeDef += memberdef.virt == 'virtual' ? 'virtual ' : '';
-        typeDef += memberdef.virt == 'virtual' ? 'virtual ' : '';
-        return typeDef;
+    Converter.ConvertParameterDescription = function (descriptionPara) {
+        return ParameterHelper_1.ParameterHelper.ConvertParameterDescription(ParameterHelper_1.ParameterHelper.CollectParametersFromDescription(descriptionPara));
     };
     Converter.ConvertMethods = function (compound) {
         var result = [];
-        Converter.ToArray(compound.sectiondef).forEach(function (sectiondef) {
+        ArrayHelper_1.ArrayHelper.ToArray(compound.sectiondef).forEach(function (sectiondef) {
             if (sectiondef.kind.indexOf('func') == -1)
                 return;
-            Converter.ToArray(sectiondef.memberdef).forEach(function (memberdef) {
+            ArrayHelper_1.ArrayHelper.ToArray(sectiondef.memberdef).forEach(function (memberdef) {
                 result.push(Converter.ConvertMemberDef(memberdef));
             });
         });
@@ -155,10 +107,10 @@ var Converter = /** @class */ (function () {
     };
     Converter.ConvertProperties = function (compound) {
         var result = [];
-        Converter.ToArray(compound.sectiondef).forEach(function (sectiondef) {
+        ArrayHelper_1.ArrayHelper.ToArray(compound.sectiondef).forEach(function (sectiondef) {
             if (sectiondef.kind.indexOf('prop') == -1)
                 return;
-            Converter.ToArray(sectiondef.memberdef).forEach(function (memberdef) {
+            ArrayHelper_1.ArrayHelper.ToArray(sectiondef.memberdef).forEach(function (memberdef) {
                 result.push(Converter.ConvertMemberDef(memberdef));
             });
         });
@@ -166,25 +118,14 @@ var Converter = /** @class */ (function () {
     };
     Converter.ConvertAttributes = function (compound) {
         var result = [];
-        Converter.ToArray(compound.sectiondef).forEach(function (sectiondef) {
+        ArrayHelper_1.ArrayHelper.ToArray(compound.sectiondef).forEach(function (sectiondef) {
             if (sectiondef.kind.indexOf('attrib') == -1)
                 return;
-            Converter.ToArray(sectiondef.memberdef).forEach(function (memberdef) {
+            ArrayHelper_1.ArrayHelper.ToArray(sectiondef.memberdef).forEach(function (memberdef) {
                 result.push(Converter.ConvertMemberDef(memberdef));
             });
         });
         return result;
-    };
-    Converter.ToArray = function (obj) {
-        if (!obj) {
-            return [];
-        }
-        else if (Array.isArray(obj)) {
-            return obj;
-        }
-        else {
-            return [obj];
-        }
     };
     return Converter;
 }());

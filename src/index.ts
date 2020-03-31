@@ -20,9 +20,11 @@ program
 	.option('-d, --doxygen <path>', 'Doxygen XML output directory.')
 	.option('-o, --output <path>', 'Converter output directory.')
 	.option('-t, --templates <path>', 'Custom templates directory. (optional)')
+	.option('-v, --verbose', 'Outputs every filename that was converted. (optional)', false)
+	.option('-q, --quiet', 'Completely disables output. (optional)', false)
 	.parse(process.argv);
 
-console.log(chalk.red(figlet.textSync('DX=>MD', {horizontalLayout: 'full'})));
+!program.quiet && console.log(chalk.red(figlet.textSync('DX=>MD', {horizontalLayout: 'full'})));
 if (program.doxygen && program.output) {
 	program.doxygen = path.resolve(program.doxygen);
 	program.output = path.resolve(program.output);
@@ -49,7 +51,7 @@ if (program.doxygen && program.output) {
 						let outputPath = path.resolve(program.output, outputFileName);
 						fs.writeFile(outputPath, rendered, function (err: Error) {
 							if (err) throw err;
-							console.log(`Converted ${chalk.yellow(fileName)} => ${chalk.green(outputFileName)}`);
+							!program.quiet && console.log(`Converted ${chalk.yellow(fileName)} => ${chalk.green(outputFileName)}`);
 						});
 					});
 				});
