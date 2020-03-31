@@ -28,11 +28,13 @@ npm i -g doxygen2markdown
 ```
 doxygen2markdown
 Options:
-  -V, --version           output the version number
+  -V, --version           Output the version number
   -d, --doxygen <type>    Doxygen XML output directory
   -o, --output <type>     Converter output directory.
-  -t, --templates <type>  Custom templates directory
-  -h, --help              output usage information
+  -t, --templates <type>  Custom templates directory. (optional)
+  -v, --verbose           Outputs every filename that was converted. (optional) (default: false)
+  -q, --quiet             Completely disables output. (optional) (default: false)
+  -h, --help              Output usage information
 ```
 
 
@@ -53,8 +55,9 @@ If you want to convert documentation with your own templates, use next command:
 
 ## ToDo list
 
-1. Add group, namespace conversion support
-2. Add code conversion to to class/interface
+1. Add group, namespace conversion support.
+2. Add code conversion to to class/interface.
+3. Add Doxygen AUTOLINK_SUPPORT flag support.
 
 
 ## Patrons <span id="patrons"></span>
