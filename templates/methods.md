@@ -15,7 +15,7 @@ if (Array.isArray(method.description) && method.description.length) {
 if (Array.isArray(method.paramDescription) && method.paramDescription.length) { 
 %>
 
-|Type|Member|Description|
+|Kind|Member|Description|
 |---|---|---|
 <%
     method.paramDescription.forEach(function(kind) {
