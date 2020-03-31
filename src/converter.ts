@@ -1,3 +1,5 @@
+import {ReferenceHelper} from "./helpers/ReferenceHelper";
+
 export class Converter {
 	public static ConvertAll(compound: any): any {
 		return {
@@ -63,7 +65,7 @@ export class Converter {
 			// returns
 			type: type,
 			typeRef: memberdef?.type?.ref,
-			anchoredTypeRef: memberdef?.type?.ref?.kindref == "compound" ? `[${!!memberdef.type.ref ? memberdef.type.ref.$t : memberdef.type}](${memberdef?.type?.ref?.refid}.md#${memberdef?.type?.ref?.$t})` : `#${memberdef?.type?.ref?.$t}`,
+			anchoredTypeRef: ReferenceHelper.ReferenceToLink(memberdef?.type?.ref),
 		};
 	}
 
