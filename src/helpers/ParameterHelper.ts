@@ -3,7 +3,7 @@ import {ArrayHelper} from "./ArrayHelper";
 export class ParameterHelper {
 	public static ConvertParameterDescription(parameterKind: any[]) {
 		return parameterKind.map((item: any) => {
-			if(item?.kind === 'return') {
+			if (item?.kind === 'return') {
 				return {
 					kind: item?.kind,
 					description: item?.para

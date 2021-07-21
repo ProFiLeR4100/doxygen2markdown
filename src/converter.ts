@@ -100,7 +100,7 @@ export class Converter {
 		let result: Array<any> = [];
 
 		ArrayHelper.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
-			if (sectiondef.kind.indexOf('func') == -1) return;
+			if (sectiondef.kind.includes('func')) return;
 
 			ArrayHelper.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
@@ -114,7 +114,7 @@ export class Converter {
 		let result: Array<any> = [];
 
 		ArrayHelper.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
-			if (sectiondef.kind.indexOf('prop') == -1) return;
+			if (sectiondef.kind.includes('prop')) return;
 
 			ArrayHelper.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
@@ -128,7 +128,7 @@ export class Converter {
 		let result: Array<any> = [];
 
 		ArrayHelper.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
-			if (sectiondef.kind.indexOf('attrib') == -1) return;
+			if (sectiondef.kind.includes('attrib')) return;
 
 			ArrayHelper.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
 				result.push(Converter.ConvertMemberDef(memberdef));

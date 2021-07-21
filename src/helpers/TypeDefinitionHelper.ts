@@ -1,6 +1,4 @@
 export class TypeDefinitionHelper {
-
-
 	public static ConvertTypeDef(memberdef: any): string {
 		let typeDef = '';
 
