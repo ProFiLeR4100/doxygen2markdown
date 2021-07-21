@@ -1,4 +1,4 @@
-export class ReferenceHelper {
+export class ReferenceUtils {
 	public static ReferenceToLink(memberdef: any): string | null {
 		if (!memberdef) return null;
 		return memberdef.kindref === "compound" ? `[${memberdef.$t}](${memberdef.refid}.md#${memberdef.$t})` : `#${memberdef.$t}`;

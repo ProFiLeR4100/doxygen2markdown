@@ -1,4 +1,4 @@
-export class TypeDefinitionHelper {
+export class TypeDefinitionUtils {
 	public static ConvertTypeDef(memberdef: any): string {
 		let typeDef = '';
 

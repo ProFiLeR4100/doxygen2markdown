@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 import {Converter} from "./converter";
+import chalk from 'chalk';
+import figlet from 'figlet';
+import path from "path";
+import program from "commander";
+import fs from "fs";
+import xml2json from "xml2json";
+import ejs from "ejs";
+import ErrnoException = NodeJS.ErrnoException;
 
-const chalk = require('chalk');
-const figlet = require('figlet');
 const pjson = require('../package.json');
-const path = require('path');
-const program = require('commander');
-const fs = require('fs');
-const xml2json = require('xml2json');
-const ejs = require('ejs');
 
 polyfills();
 
@@ -24,32 +25,83 @@ program
 	.option('-q, --quiet', 'Completely disables output. (optional)', false)
 	.parse(process.argv);
 
+
+export interface BaseCompoundRef {
+	readonly refid: string;
+	readonly prot: string;
+	readonly virt: string;
+	readonly $t: string;
+}
+
+export interface MemberDefDescription {
+	readonly para: unknown | unknown[];
+}
+
+export interface TypeRef {
+	readonly $t: string;
+}
+
+export interface TypeDef {
+	readonly ref: TypeRef;
+}
+
+export interface MemberDef {
+	readonly name: string;
+	readonly id: string;
+	readonly type: TypeDef;
+	readonly kind: string;
+	readonly argsstring: string;
+	readonly briefdescription: MemberDefDescription;
+	readonly detaileddescription: MemberDefDescription;
+	readonly ref: BaseCompoundRef;
+	readonly initializer: unknown;
+}
+export interface SectionDef {
+	readonly memberdef: MemberDef | MemberDef[];
+	readonly kind: string;
+}
+
+export interface CompoundDef {
+	readonly sectiondef: SectionDef | SectionDef[];
+	readonly basecompoundref: BaseCompoundRef | BaseCompoundRef[];
+	readonly id: string;
+	readonly kind: string;
+	readonly language: string;
+	readonly prot: string;
+}
+
+export interface DXFile {
+	readonly doxygen: {
+		readonly compounddef: CompoundDef
+	};
+}
+
 !program.quiet && console.log(chalk.red(figlet.textSync('DX=>MD', {horizontalLayout: 'full'})));
 if (program.doxygen && program.output) {
 	program.doxygen = path.resolve(program.doxygen);
 	program.output = path.resolve(program.output);
 	program.templates = program.templates ? path.resolve(program.templates) : path.resolve(__dirname, '../templates');
 
-	fs.readdir(program.doxygen, (err: Error, filesPaths: Array<string>) => {
+	fs.readdir(program.doxygen, (err: ErrnoException | null, filesPaths: Array<string>) => {
 		filesPaths.forEach((fileName) => {
 			let fileMask = /(class|interface|struct)_(.*)\.xml/gm;
 			let match = fileMask.exec(fileName);
 			if (match) {
-				fs.readFile(program.doxygen + '/' + fileName, 'utf8', (err: Error, data: string) => {
-					let obj = xml2json.toJson(data, {object: true});
-					let compound = obj.doxygen.compounddef;
+				fs.readFile(program.doxygen + '/' + fileName, {encoding:'utf8'}, (err: ErrnoException | null, doxygenXmlFileContent: string) => {
+					let doxygenConvertedData: DXFile = xml2json.toJson(doxygenXmlFileContent, {object: true}) as unknown as DXFile;
+					let compound = doxygenConvertedData.doxygen.compounddef;
 					let templatePath = path.resolve(program.templates, `${match![1]}.md`);
 					let convertedCompound = Converter.ConvertAll(compound);
 
 					ejs.renderFile(templatePath, {
 						compound: compound,
 						cc: convertedCompound
-					}, null, (err: Error, rendered: string) => {
+					}, (err: ErrnoException | null, rendered: string) => {
 						if (err) throw err;
 
 						let outputFileName = `${compound.id}.md`;
 						let outputPath = path.resolve(program.output, outputFileName);
-						fs.writeFile(outputPath, rendered, function (err: Error) {
+						fs.writeFile(outputPath, rendered, (err: ErrnoException | null) => {
 							if (err) throw err;
 							!program.quiet && console.log(`Converted ${chalk.yellow(fileName)} => ${chalk.green(outputFileName)}`);
 						});

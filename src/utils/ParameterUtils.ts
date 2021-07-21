@@ -1,6 +1,6 @@
-import {ArrayHelper} from "./ArrayHelper";
+import {ArrayUtils} from "./ArrayUtils";
 
-export class ParameterHelper {
+export class ParameterUtils {
 	public static ConvertParameterDescription(parameterKind: any[]) {
 		return parameterKind.map((item: any) => {
 			if (item?.kind === 'return') {
@@ -12,7 +12,7 @@ export class ParameterHelper {
 
 			return {
 				kind: item?.kind,
-				parameters: ArrayHelper
+				parameters: ArrayUtils
 					.ToArray(item?.parameteritem)
 					.map((item: any) => {
 						return {
@@ -25,13 +25,13 @@ export class ParameterHelper {
 	}
 
 	public static CollectParametersFromDescription(descriptionPara: any) {
-		return ArrayHelper
+		return ArrayUtils
 			.ToArray(descriptionPara)
 			.filter((item: any) => !!item?.simplesect || !!item?.parameterlist)
 			.map((item: any) => {
 				return [
-					...ArrayHelper.ToArray(item?.simplesect),
-					...ArrayHelper.ToArray(item?.parameterlist)
+					...ArrayUtils.ToArray(item?.simplesect),
+					...ArrayUtils.ToArray(item?.parameterlist)
 				]
 			})
 			.flat()

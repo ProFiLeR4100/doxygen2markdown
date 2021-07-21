@@ -1,17 +1,20 @@
 #!/usr/bin/env node
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var converter_1 = require("./converter");
-var chalk = require('chalk');
-var figlet = require('figlet');
+var chalk_1 = __importDefault(require("chalk"));
+var figlet_1 = __importDefault(require("figlet"));
+var path_1 = __importDefault(require("path"));
+var commander_1 = __importDefault(require("commander"));
+var fs_1 = __importDefault(require("fs"));
+var xml2json_1 = __importDefault(require("xml2json"));
+var ejs_1 = __importDefault(require("ejs"));
 var pjson = require('../package.json');
-var path = require('path');
-var program = require('commander');
-var fs = require('fs');
-var xml2json = require('xml2json');
-var ejs = require('ejs');
 polyfills();
-program
+commander_1.default
     .version(pjson.version)
     .description(pjson.description)
     .usage('[options]')
@@ -21,33 +24,33 @@ program
     .option('-v, --verbose', 'Outputs every filename that was converted. (optional)', false)
     .option('-q, --quiet', 'Completely disables output. (optional)', false)
     .parse(process.argv);
-!program.quiet && console.log(chalk.red(figlet.textSync('DX=>MD', { horizontalLayout: 'full' })));
-if (program.doxygen && program.output) {
-    program.doxygen = path.resolve(program.doxygen);
-    program.output = path.resolve(program.output);
-    program.templates = program.templates ? path.resolve(program.templates) : path.resolve(__dirname, '../templates');
-    fs.readdir(program.doxygen, function (err, filesPaths) {
+!commander_1.default.quiet && console.log(chalk_1.default.red(figlet_1.default.textSync('DX=>MD', { horizontalLayout: 'full' })));
+if (commander_1.default.doxygen && commander_1.default.output) {
+    commander_1.default.doxygen = path_1.default.resolve(commander_1.default.doxygen);
+    commander_1.default.output = path_1.default.resolve(commander_1.default.output);
+    commander_1.default.templates = commander_1.default.templates ? path_1.default.resolve(commander_1.default.templates) : path_1.default.resolve(__dirname, '../templates');
+    fs_1.default.readdir(commander_1.default.doxygen, function (err, filesPaths) {
         filesPaths.forEach(function (fileName) {
             var fileMask = /(class|interface|struct)_(.*)\.xml/gm;
             var match = fileMask.exec(fileName);
             if (match) {
-                fs.readFile(program.doxygen + '/' + fileName, 'utf8', function (err, data) {
-                    var obj = xml2json.toJson(data, { object: true });
-                    var compound = obj.doxygen.compounddef;
-                    var templatePath = path.resolve(program.templates, match[1] + ".md");
+                fs_1.default.readFile(commander_1.default.doxygen + '/' + fileName, { encoding: 'utf8' }, function (err, doxygenXmlFileContent) {
+                    var doxygenConvertedData = xml2json_1.default.toJson(doxygenXmlFileContent, { object: true });
+                    var compound = doxygenConvertedData.doxygen.compounddef;
+                    var templatePath = path_1.default.resolve(commander_1.default.templates, match[1] + ".md");
                     var convertedCompound = converter_1.Converter.ConvertAll(compound);
-                    ejs.renderFile(templatePath, {
+                    ejs_1.default.renderFile(templatePath, {
                         compound: compound,
                         cc: convertedCompound
-                    }, null, function (err, rendered) {
+                    }, function (err, rendered) {
                         if (err)
                             throw err;
                         var outputFileName = compound.id + ".md";
-                        var outputPath = path.resolve(program.output, outputFileName);
-                        fs.writeFile(outputPath, rendered, function (err) {
+                        var outputPath = path_1.default.resolve(commander_1.default.output, outputFileName);
+                        fs_1.default.writeFile(outputPath, rendered, function (err) {
                             if (err)
                                 throw err;
-                            !program.quiet && console.log("Converted " + chalk.yellow(fileName) + " => " + chalk.green(outputFileName));
+                            !commander_1.default.quiet && console.log("Converted " + chalk_1.default.yellow(fileName) + " => " + chalk_1.default.green(outputFileName));
                         });
                     });
                 });
@@ -56,7 +59,7 @@ if (program.doxygen && program.output) {
     });
 }
 if (!process.argv.slice(2).length) {
-    program.outputHelp();
+    commander_1.default.outputHelp();
 }
 function polyfills() {
     Object.defineProperty(Array.prototype, 'flat', {

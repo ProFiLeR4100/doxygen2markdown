@@ -1,4 +1,4 @@
-export class ArrayHelper {
+export class ArrayUtils {
 	public static ToArray(obj: any): any {
 		if (!obj) {
 			return [];

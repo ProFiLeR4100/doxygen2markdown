@@ -1,10 +1,11 @@
-import {ReferenceHelper} from "./helpers/ReferenceHelper";
-import {ParameterHelper} from "./helpers/ParameterHelper";
-import {ArrayHelper} from "./helpers/ArrayHelper";
-import {TypeDefinitionHelper} from "./helpers/TypeDefinitionHelper";
+import {ReferenceUtils} from "./utils/ReferenceUtils";
+import {ParameterUtils} from "./utils/ParameterUtils";
+import {ArrayUtils} from "./utils/ArrayUtils";
+import {TypeDefinitionUtils} from "./utils/TypeDefinitionUtils";
+import {BaseCompoundRef, CompoundDef, MemberDef, SectionDef} from "./index";
 
 export class Converter {
-	public static ConvertAll(compound: any): any {
+	public static ConvertAll(compound: CompoundDef): any {
 		return {
 			hierarchy: Converter.ConvertHierarchy(compound),
 			summary: Converter.ConvertSummary(compound),
@@ -14,21 +15,21 @@ export class Converter {
 		}
 	}
 
-	public static ConvertHierarchy(compound: any): any {
+	public static ConvertHierarchy(compound: CompoundDef): any {
 		let result: any = [];
 		if (Array.isArray(compound.basecompoundref)) {
-			result.push(...compound.basecompoundref.map((basecompoundref: any) => `${basecompoundref.prot} ${basecompoundref.$t}`))
+			result.push(...compound.basecompoundref.map((basecompoundref: BaseCompoundRef) => `${basecompoundref.prot} ${basecompoundref.$t}`))
 		} else if (compound?.basecompoundref?.prot) {
 			result.push(`${compound.basecompoundref.prot} ${compound.basecompoundref.$t}`)
 		}
 		return result;
 	}
 
-	public static ConvertSummary(compound: any): any {
+	public static ConvertSummary(compound: CompoundDef): any {
 		let result: Array<any> = [];
 
-		ArrayHelper.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
-			ArrayHelper.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
+		ArrayUtils.ToArray(compound.sectiondef).forEach((sectiondef: SectionDef) => {
+			ArrayUtils.ToArray(sectiondef.memberdef).forEach((memberdef: MemberDef) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
 			});
 		});
@@ -36,7 +37,7 @@ export class Converter {
 		return result;
 	}
 
-	private static ConvertMemberDef(memberdef: any): any {
+	private static ConvertMemberDef(memberdef: MemberDef): any {
 		return {
 			...Converter.ConvertName(memberdef),
 			...Converter.ConvertTypeDefRef(memberdef),
@@ -46,7 +47,7 @@ export class Converter {
 		};
 	}
 
-	private static ConvertName(memberdef: any): any {
+	private static ConvertName(memberdef: MemberDef): any {
 		return {
 			name: memberdef.name,
 			anchor: memberdef.id,
@@ -54,34 +55,35 @@ export class Converter {
 		};
 	}
 
-	private static ConvertTypeDefRef(memberdef: any): any {
-		let type = !!memberdef?.type?.ref ? memberdef.type.ref.$t : memberdef.type;
+	private static ConvertTypeDefRef(memberdef: MemberDef): any {
+		let type = memberdef?.type?.ref?.$t || memberdef.type;
 		if (typeof type === 'object') {
+			// TODO: some weird shit is goint in here, rewrite it
 			type = !Object.keys(type).length ? memberdef.name : type
 		}
 
 		return {
 			// self signature
-			typeDef: TypeDefinitionHelper.ConvertTypeDef(memberdef),
+			typeDef: TypeDefinitionUtils.ConvertTypeDef(memberdef),
 			initializer: typeof memberdef.initializer == 'object' ? '= {...}' : memberdef.initializer,
 
 			// returns
 			type: type,
 			typeRef: memberdef?.type?.ref,
-			anchoredTypeRef: ReferenceHelper.ReferenceToLink(memberdef?.type?.ref),
+			anchoredTypeRef: ReferenceUtils.ReferenceToLink(memberdef?.type?.ref),
 		};
 	}
 
-	private static ConvertFuncDef(memberdef: any): any {
+	private static ConvertFuncDef(memberdef: MemberDef): any {
 		return {
 			args: memberdef.kind === 'function' ? memberdef.argsstring : '',
-			reimplementsAnchor: ReferenceHelper.InheritanceToLink(memberdef),
+			reimplementsAnchor: ReferenceUtils.InheritanceToLink(memberdef),
 		};
 	}
 
-	private static ConvertDescription(memberdef: any): any {
-		let description = ArrayHelper.ToArray(memberdef?.briefdescription?.para)
-			.concat(ArrayHelper.ToArray(memberdef?.detaileddescription?.para))
+	private static ConvertDescription(memberdef: MemberDef): any {
+		let description = ArrayUtils.ToArray(memberdef?.briefdescription?.para)
+			.concat(ArrayUtils.ToArray(memberdef?.detaileddescription?.para))
 			.filter((item: any) => typeof item === 'string');
 
 		return {
@@ -93,16 +95,16 @@ export class Converter {
 	}
 
 	private static ConvertParameterDescription(descriptionPara: any): any {
-		return ParameterHelper.ConvertParameterDescription(ParameterHelper.CollectParametersFromDescription(descriptionPara));
+		return ParameterUtils.ConvertParameterDescription(ParameterUtils.CollectParametersFromDescription(descriptionPara));
 	}
 
-	public static ConvertMethods(compound: any): any {
+	public static ConvertMethods(compound: CompoundDef): any {
 		let result: Array<any> = [];
 
-		ArrayHelper.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
+		ArrayUtils.ToArray(compound.sectiondef).forEach((sectiondef: SectionDef) => {
 			if (sectiondef.kind.includes('func')) return;
 
-			ArrayHelper.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
+			ArrayUtils.ToArray(sectiondef.memberdef).forEach((memberdef: MemberDef) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
 			});
 		});
@@ -110,13 +112,13 @@ export class Converter {
 		return result;
 	}
 
-	public static ConvertProperties(compound: any): any {
+	public static ConvertProperties(compound: CompoundDef): any {
 		let result: Array<any> = [];
 
-		ArrayHelper.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
+		ArrayUtils.ToArray(compound.sectiondef).forEach((sectiondef: SectionDef) => {
 			if (sectiondef.kind.includes('prop')) return;
 
-			ArrayHelper.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
+			ArrayUtils.ToArray(sectiondef.memberdef).forEach((memberdef: MemberDef) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
 			});
 		});
@@ -124,13 +126,13 @@ export class Converter {
 		return result;
 	}
 
-	public static ConvertAttributes(compound: any): any {
+	public static ConvertAttributes(compound: CompoundDef): any {
 		let result: Array<any> = [];
 
-		ArrayHelper.ToArray(compound.sectiondef).forEach((sectiondef: any) => {
+		ArrayUtils.ToArray(compound.sectiondef).forEach((sectiondef: SectionDef) => {
 			if (sectiondef.kind.includes('attrib')) return;
 
-			ArrayHelper.ToArray(sectiondef.memberdef).forEach((memberdef: any) => {
+			ArrayUtils.ToArray(sectiondef.memberdef).forEach((memberdef: MemberDef) => {
 				result.push(Converter.ConvertMemberDef(memberdef));
 			});
 		});
