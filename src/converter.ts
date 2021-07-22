@@ -2,7 +2,10 @@ import {ReferenceUtils} from "./utils/ReferenceUtils";
 import {ParameterUtils} from "./utils/ParameterUtils";
 import {ArrayUtils} from "./utils/ArrayUtils";
 import {TypeDefinitionUtils} from "./utils/TypeDefinitionUtils";
-import {BaseCompoundRef, CompoundDef, MemberDef, SectionDef} from "./index";
+import CompoundDef from "./models/CompoundDef";
+import BaseCompoundRef from "./models/BaseCompoundRef";
+import SectionDef from "./models/SectionDef";
+import MemberDef from "./models/MemberDef";
 
 export class Converter {
 	public static ConvertAll(compound: CompoundDef): any {
@@ -84,7 +87,7 @@ export class Converter {
 	private static ConvertDescription(memberdef: MemberDef): any {
 		let description = ArrayUtils.ToArray(memberdef?.briefdescription?.para)
 			.concat(ArrayUtils.ToArray(memberdef?.detaileddescription?.para))
-			.filter((item: any) => typeof item === 'string');
+			.filter((item: unknown) => typeof item === 'string');
 
 		return {
 			description: description,
